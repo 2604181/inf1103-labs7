@@ -1,3 +1,8 @@
+"""
+INF1103 Week 9 - DigitalProduct
+A DigitalProduct IS-A Product. It is NOT shipped, so it does not implement CanBeShipped.
+"""
+
 from product import Product
 
 
@@ -14,3 +19,6 @@ class DigitalProduct(Product):
     def display_information(self):
         super().display_information()
         print(f"    Type: Digital | Download Size: {self.__download_size:.2f} MB")
+
+    def get_fulfilment_info(self) -> str:
+        return "Delivered digitally via download link."
