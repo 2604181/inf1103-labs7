@@ -1,8 +1,11 @@
 """
-INF1103 Week 8 - Inventory Manager (OOP)
+INF1103 Week 9 - Inventory Manager (OOP: inheritance, abstraction, interfaces)
+Responsibility: display the menu, get user input, call Inventory methods.
 """
-from product import Product
 from inventory import Inventory
+from physical_product import PhysicalProduct
+from digital_product import DigitalProduct
+from can_be_shipped import CanBeShipped
 from file_handling import load_inventory, save_inventory, INVENTORY_FILE
 
 
@@ -23,9 +26,17 @@ def get_valid_float(prompt):
             print("Error. Please enter a valid number.")
             continue
         if number < 0:
-            print("Error. Price cannot be negative.")
+            print("Error. Value cannot be negative.")
             continue
         return number
+
+
+def get_product_type_choice():
+    while True:
+        choice = input("Product Type (1 = Physical, 2 = Digital): ").strip()
+        if choice == "1" or choice == "2":
+            return choice
+        print("Error. Please enter 1 for Physical or 2 for Digital.")
 
 
 def display_menu():
@@ -75,6 +86,7 @@ def main():
 
         elif option == "2":
             print("Add New Product")
+            product_type = get_product_type_choice()
             product_id = input("Product ID: ").strip().upper()
             name = input("Product Name: ").strip()
             if product_id == "" or name == "":
@@ -82,7 +94,16 @@ def main():
             else:
                 price = get_valid_float("Price: ")
                 stock = get_valid_int("Stock Quantity: ")
-                new_product = Product(product_id, name, price, stock)
+                if product_type == "1":
+                    weight = get_valid_float("Weight (kg): ")
+                    new_product = PhysicalProduct(
+                        product_id, name, price, stock, weight
+                    )
+                else:
+                    download_size = get_valid_float("Download Size (MB): ")
+                    new_product = DigitalProduct(
+                        product_id, name, price, stock, download_size
+                    )
                 if inventory.add_product(new_product):
                     print("Product added successfully!")
                 else:
@@ -111,10 +132,10 @@ def main():
             else:
                 print("Product Found")
                 print("-" * 48)
-                print(f"ID: {product.get_product_id()}")
-                print(f"Name: {product.get_name()}")
-                print(f"Price: ${product.get_price():.2f}")
-                print(f"Stock: {product.get_stock()}")
+                product.display_information()
+                if isinstance(product, CanBeShipped):
+                    cost = product.calculate_shipping_cost()
+                    print(f"    Shipping Cost: ${cost:.2f}")
                 print("-" * 48)
 
         elif option == "5":
