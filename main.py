@@ -133,6 +133,7 @@ def main():
                 print("Product Found")
                 print("-" * 48)
                 product.display_information()
+                print(f"    Fulfilment: {product.get_fulfilment_info()}")
                 if isinstance(product, CanBeShipped):
                     cost = product.calculate_shipping_cost()
                     print(f"    Shipping Cost: ${cost:.2f}")
